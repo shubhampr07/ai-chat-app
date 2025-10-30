@@ -10,7 +10,7 @@ export async function createUser(userId: string, username: string): Promise<void
 }
 
 export async function userExists(userId: string): Promise<boolean> {
-  const result = await sql`SELECT id FROM users WHERE id = ${userId}`;
+  const result = await sql`SELECT id FROM users WHERE id = ${userId}` as any[];
   return result.length > 0;
 }
 
@@ -21,7 +21,7 @@ export async function getSessions(userId: string): Promise<ChatSession[]> {
     FROM chat_sessions
     WHERE user_id = ${userId}
     ORDER BY updated_at DESC
-  `;
+  ` as any[];
 
   const sessionsWithMessages = await Promise.all(
     sessions.map(async (session) => ({
@@ -41,7 +41,7 @@ export async function getSession(sessionId: string): Promise<ChatSession | null>
     SELECT id, title, created_at as "createdAt", updated_at as "updatedAt"
     FROM chat_sessions
     WHERE id = ${sessionId}
-  `;
+  ` as any[];
 
   if (result.length === 0) return null;
 
@@ -99,7 +99,7 @@ export async function getSessionMessages(sessionId: string): Promise<Message[]> 
     FROM messages
     WHERE session_id = ${sessionId}
     ORDER BY timestamp ASC
-  `;
+  ` as any[];
 
   const messagesWithArtifacts = await Promise.all(
     messages.map(async (msg) => {
@@ -181,7 +181,7 @@ export async function deleteMessagesFromIndex(sessionId: string, fromIndex: numb
     SELECT id FROM messages
     WHERE session_id = ${sessionId}
     ORDER BY timestamp ASC
-  `;
+  ` as any[];
 
   const messagesToDelete = messages.slice(fromIndex);
 
@@ -200,7 +200,7 @@ export async function getMessageArtifacts(messageId: string): Promise<Artifact[]
     SELECT id, type, language, content, expanded
     FROM artifacts
     WHERE message_id = ${messageId}
-  `;
+  ` as any[];
 
   return artifacts.map((artifact) => ({
     id: artifact.id,
