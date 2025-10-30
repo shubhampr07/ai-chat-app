@@ -364,9 +364,9 @@ export function ChatInterface({ onOpenSidebar }: ChatInterfaceProps) {
 
             <div className="max-w-2xl w-full text-center space-y-8">
               <div className="space-y-3">
-                <h1 className="text-[36px] font-normal text-[#2b2622] leading-tight flex items-center justify-center gap-3">
-                  <span className="text-[#cc785c] text-4xl">✳</span>
-                  {getGreeting()}{username && `, ${username}`}
+                <h1 className="text-[28px] sm:text-[36px] font-normal text-[#2b2622] leading-tight flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+                  <span className="text-[#cc785c] text-3xl sm:text-4xl">✳</span>
+                  <span className="whitespace-nowrap">{getGreeting()}{username && `, ${username}`}</span>
                 </h1>
               </div>
 
