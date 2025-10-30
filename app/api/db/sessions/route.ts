@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSessions, createSession, deleteSession, updateSessionTitle, getSession } from '@/lib/database';
+import { getSessions, createSession, deleteSession, updateSessionTitle, getSession } from '@/lib/database-postgres';
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,14 +12,14 @@ export async function GET(request: NextRequest) {
     }
 
     if (sessionId) {
-      const session = getSession(sessionId);
+      const session = await getSession(sessionId);
       if (!session) {
         return NextResponse.json({ error: 'Session not found' }, { status: 404 });
       }
       return NextResponse.json({ session });
     }
 
-    const sessions = getSessions(userId);
+    const sessions = await getSessions(userId);
     return NextResponse.json({ sessions });
   } catch (error) {
     console.error('Error getting sessions:', error);
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User ID and session ID are required' }, { status: 400 });
     }
 
-    const session = createSession(userId, sessionId, title);
+    const session = await createSession(userId, sessionId, title);
     return NextResponse.json({ session });
   } catch (error) {
     console.error('Error creating session:', error);
@@ -53,7 +53,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Session ID and title are required' }, { status: 400 });
     }
 
-    updateSessionTitle(sessionId, title);
+    await updateSessionTitle(sessionId, title);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error updating session:', error);
@@ -70,7 +70,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Session ID is required' }, { status: 400 });
     }
 
-    deleteSession(sessionId);
+    await deleteSession(sessionId);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting session:', error);

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createUser, userExists, clearAllSessions } from '@/lib/database';
+import { createUser, userExists, clearAllSessions } from '@/lib/database-postgres';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,8 +11,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Only create user if doesn't exist (for foreign key constraint)
-    if (!userExists(userId)) {
-      createUser(userId, username.trim());
+    if (!(await userExists(userId))) {
+      await createUser(userId, username.trim());
     }
 
     return NextResponse.json({ success: true });
@@ -31,7 +31,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
-    clearAllSessions(userId);
+    await clearAllSessions(userId);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error clearing sessions:', error);

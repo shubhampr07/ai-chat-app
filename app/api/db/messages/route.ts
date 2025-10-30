@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { addMessage, updateMessage, deleteMessagesFromIndex, getSessionMessages } from '@/lib/database';
+import { addMessage, updateMessage, deleteMessagesFromIndex, getSessionMessages } from '@/lib/database-postgres';
 import { Message } from '@/types/chat';
 
 export async function GET(request: NextRequest) {
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Session ID is required' }, { status: 400 });
     }
 
-    const messages = getSessionMessages(sessionId);
+    const messages = await getSessionMessages(sessionId);
     return NextResponse.json({ messages });
   } catch (error) {
     console.error('Error getting messages:', error);
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Session ID and message are required' }, { status: 400 });
     }
 
-    addMessage(sessionId, message);
+    await addMessage(sessionId, message);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error adding message:', error);
@@ -45,7 +45,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Session ID, message ID, and updates are required' }, { status: 400 });
     }
 
-    updateMessage(sessionId, messageId, updates);
+    await updateMessage(sessionId, messageId, updates);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error updating message:', error);
@@ -63,7 +63,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Session ID and fromIndex are required' }, { status: 400 });
     }
 
-    deleteMessagesFromIndex(sessionId, parseInt(fromIndex));
+    await deleteMessagesFromIndex(sessionId, parseInt(fromIndex));
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting messages:', error);

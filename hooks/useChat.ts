@@ -21,6 +21,13 @@ export function useChat() {
         const user = storage.getUser();
 
         if (user) {
+          // Ensure user exists in database (in case of migration or fresh DB)
+          await fetch('/api/db/user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: user.id, username: user.username }),
+          });
+
           setUserId(user.id);
           setUsername(user.username);
           const dbSessions = await storage.getSessions(user.id);
@@ -119,28 +126,27 @@ export function useChat() {
   const addMessage = useCallback(async (sessionId: string, message: Message) => {
     await storage.addMessage(sessionId, message);
 
+    // Find the session to check if we need to update title
+    const session = sessions.find(s => s.id === sessionId);
+    let newTitle: string | null = null;
+
+    // Set title to first user message (like ChatGPT)
+    if (session && session.title === 'New Chat' && message.role === 'user' && session.messages.length === 0) {
+      newTitle = message.content.length > 60
+        ? message.content.slice(0, 60).trim() + '...'
+        : message.content.trim();
+
+      // Update title in database
+      await storage.updateSessionTitle(sessionId, newTitle);
+    }
+
     // Update state immediately with the new message and title
     setSessions(prev => {
       const updatedSessions = prev.map(s => {
         if (s.id !== sessionId) return s;
 
         const messages = [...s.messages, message];
-
-        // Set title to first user message (like ChatGPT)
-        let title = s.title;
-        console.log('Current session title:', s.title, 'Message role:', message.role, 'Messages count:', s.messages.length);
-        if (s.title === 'New Chat' && message.role === 'user') {
-          title = message.content.length > 60
-            ? message.content.slice(0, 60).trim() + '...'
-            : message.content.trim();
-
-          console.log('Updating title to:', title);
-
-          // Update title in database asynchronously (don't wait)
-          storage.updateSessionTitle(sessionId, title).catch(err =>
-            console.error('Failed to update session title:', err)
-          );
-        }
+        const title = newTitle || s.title;
 
         return {
           ...s,
@@ -153,7 +159,7 @@ export function useChat() {
       // Sort by updatedAt DESC (most recent first) and return new array
       return updatedSessions.sort((a, b) => b.updatedAt - a.updatedAt);
     });
-  }, []);
+  }, [sessions]);
 
   const updateMessage = useCallback(async (sessionId: string, messageId: string, updates: Partial<Message>) => {
     // Debounce database updates during streaming
@@ -187,7 +193,7 @@ export function useChat() {
       timestamp: Date.now(),
     };
 
-    addMessage(sessionId, userMessage);
+    await addMessage(sessionId, userMessage);
 
     const assistantMessage: Message = {
       id: crypto.randomUUID(),
@@ -197,7 +203,7 @@ export function useChat() {
       isStreaming: true,
     };
 
-    addMessage(sessionId, assistantMessage);
+    await addMessage(sessionId, assistantMessage);
 
     // Create new AbortController for this request
     const abortController = new AbortController();

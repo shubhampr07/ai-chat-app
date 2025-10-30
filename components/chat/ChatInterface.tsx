@@ -5,7 +5,7 @@ import { useChat } from '@/hooks/useChat';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { StickyHeader } from './StickyHeader';
-import { Code, ChevronDown, Share2, FileEdit, BookOpen, Edit3, ShoppingCart, Menu } from 'lucide-react';
+import { Code, ChevronDown, Share2, FileEdit, BookOpen, Edit3, ShoppingCart, Menu, Loader2 } from 'lucide-react';
 
 type Category = 'code' | 'create' | 'learn' | 'write' | 'life';
 
@@ -309,8 +309,8 @@ export function ChatInterface({ onOpenSidebar }: ChatInterfaceProps) {
 
   if (!activeSession) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-white">
-        <p className="text-gray-500">No active session</p>
+      <div className="flex-1 flex items-center justify-center bg-[#f5f3ef]">
+        <Loader2 className="h-8 w-8 animate-spin text-[#cc785c]" />
       </div>
     );
   }
