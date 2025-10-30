@@ -3,7 +3,8 @@
 A modern, full-featured AI chat application built with Next.js, Google Gemini AI, and PostgreSQL. Experience Claude-like conversations with a beautiful, responsive interface.
 
 💬 AI Chat Application — Features Overview
-🚀 ##Task 1 — Chat Interface
+
+🚀 # Task 1 — Chat Interface
 
 A fully functional chat experience inspired by Claude and Perplexity, with detailed attention to UI/UX and performance.
 
@@ -23,7 +24,7 @@ Core Features
 
 📂 Sidebar Chat Sessions — View, list, and switch seamlessly between multiple chat sessions.
 
-🔍 ##Task 2 — Prompt Area with Scalable Search
+🔍 # Task 2 — Prompt Area with Scalable Search
 
 An enhanced input bar offering intelligent, context-aware autocomplete and mention functionality.
 
@@ -39,7 +40,7 @@ Core Features
 
 👥 Mentions (@) — Typing “@” triggers a mock people search from a dataset of 1 million placeholder names.
 
-⚙️ ##Task 3 — System Quality & Architecture
+⚙️ # Task 3 — System Quality & Architecture
 
 Built with a clean, modular, and scalable architecture optimized for performance and maintainability.
 
@@ -61,7 +62,7 @@ Settings
 
 ⚡ Fully Responsive Design — Modern, minimal black & white theme with smooth performance across all devices.
 
-🌟 ## Additional Features
+🌟 # Additional Features
 
 Enhanced beyond the required tasks for a more realistic and immersive AI experience.
 
